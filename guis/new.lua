@@ -3508,9 +3508,13 @@ components = {
 				end
 			end
 		
-			if not skipGUI then
-				receba:UpdateGUI()
-			end
+			if props.Profiles and value and receba.Loaded then
+    receba:Save()
+end
+
+if not skipGUI then
+    receba:UpdateGUI()
+end
 		end
 		
 		function component:Color(hue, sat, val, isRainbow)
