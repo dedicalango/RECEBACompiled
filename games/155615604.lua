@@ -1390,6 +1390,7 @@ run(function()
 	local old, connection
 	
 	local function EntityAdded(ent)
+	lplr:SetAttribute('BackpackEnabled', true)
 		connection = getconnections(replicatedStorage.GunRemotes.PlayerTased.OnClientEvent)[1]
 		if not (connection and connection.Function) then
 			repeat
@@ -1407,9 +1408,7 @@ run(function()
 				end
 	
 				task.wait(3.5)
-				if lplr.Character == char then
-					lplr:SetAttribute('BackpackEnabled', true)
-				end
+				lplr:SetAttribute('BackpackEnabled', true)
 			end)
 		end
 	end
