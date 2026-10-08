@@ -1,3 +1,4 @@
+-- RECEBA PROFILE FIX BUILD 2: persistent profile list recovery
 local receba = {
 	ActiveBinds = {},
 	Categories = {},
@@ -708,6 +709,41 @@ function receba:Load(skipgui, profile)
 				if category then
 					category:Load(data)
 				end
+			end
+
+			-- RECEBA profile persistence fix:
+			-- Rebuild the visible Profiles list from the individual profile files
+			-- every time the GUI is loaded. This is independent of the .gui.txt list,
+			-- so a profile that still exists on disk cannot become invisible.
+			local profilesCategory = self.Categories.Profiles
+			if profilesCategory and listfiles then
+				local ok, files = pcall(function()
+					return listfiles('receba/profiles')
+				end)
+
+				if ok and type(files) == 'table' then
+					local suffix = tostring(self.Place)..'.txt'
+
+					for _, file in files do
+						local path = tostring(file):gsub('\\', '/')
+						local filename = path:match('([^/]+)$')
+
+						if filename
+							and #filename > #suffix
+							and filename:sub(-#suffix) == suffix then
+
+							local profileName = filename:sub(1, #filename - #suffix)
+
+							if profileName ~= ''
+								and not profilesCategory:GetValue(profileName) then
+								profilesCategory:CreateProfile(profileName)
+							end
+						end
+					end
+				end
+
+				-- Force a rebuild of the visible list after recovery.
+				profilesCategory:ChangeValue(nil, true)
 			end
 		end
 	end
